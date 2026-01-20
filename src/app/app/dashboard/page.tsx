@@ -264,7 +264,7 @@ export default function DashboardPage() {
     value: string | number,
     icon: LucideIcon,
     iconColor: string,
-    description?: string,
+    description?: React.ReactNode,
     trend?: number,
     additionalInfo?: string
   ) => {
@@ -324,19 +324,33 @@ export default function DashboardPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {isLoadingAllSales && !allSales.length ? (
-          renderLoadingCard("Total Gross Revenue", Banknote, "text-green-600")
+          renderLoadingCard("Net Revenue", Banknote, "text-green-600")
         ) : allSalesError ? (
-          renderErrorCard("Total Gross Revenue", Banknote, "text-green-600")
+          renderErrorCard("Net Revenue", Banknote, "text-green-600")
         ) : (
-          renderStatsCard(
-            "Total Gross Revenue",
-            formatCurrency(totalRevenueAllTime),
-            Banknote,
-            "text-green-600",
-            "From all successful transactions.",
-            undefined, 
-            "All Time"
-          )
+          (() => {
+            const totalReturnsValue = returns?.reduce((sum, r) => sum + (r.refundAmount || 0), 0) || 0;
+            const netRevenue = totalRevenueAllTime - totalReturnsValue;
+            
+            return renderStatsCard(
+              "Net Revenue",
+              formatCurrency(netRevenue),
+              Banknote,
+              "text-green-600",
+              <div className="space-y-1 mt-1">
+                <div className="flex justify-between text-xs">
+                  <span>Gross Sales:</span>
+                  <span className="font-medium text-green-600">+{formatCurrency(totalRevenueAllTime)}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span>Returns:</span>
+                  <span className="font-medium text-red-600">-{formatCurrency(totalReturnsValue)}</span>
+                </div>
+              </div>,
+              undefined, 
+              "All Time"
+            );
+          })()
         )}
 
         {isLoadingAllSales && !allSales.length ? (

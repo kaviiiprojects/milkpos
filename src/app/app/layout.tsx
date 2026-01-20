@@ -128,7 +128,7 @@ const ALL_NAV_ITEMS: NavItemConfig[] = [
 ];
 
 function calculateCurrentPageLabel(pathname: string, userRole: UserRole | undefined, currentNavItems: NavItemConfig[]): string {
-    if (!userRole) return "N Group Products";
+    if (!userRole) return "POS V1";
 
     const findLabel = (items: NavItemConfig[], currentPath: string): string | null => {
         for (const item of items) {
@@ -180,7 +180,7 @@ function calculateCurrentPageLabel(pathname: string, userRole: UserRole | undefi
     const fallbackItem = currentNavItems.find(item => item.id === primarySegment);
     if (fallbackItem) return fallbackItem.label;
 
-    return "N Group Products";
+    return "POS V1";
 }
 
 
@@ -210,7 +210,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
           "font-headline font-bold",
           isCollapsed && !isMobile ? "hidden" : "text-xl text-primary"
         )}>
-          N Group Products
+          POS V1
         </span>
       </AppNewSidebarHeader>
       <AppNewSidebarContent />

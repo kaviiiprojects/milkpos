@@ -46,7 +46,7 @@ export function AppLogo({ size = "md" }: { size?: "sm" | "md" | "lg" | "iconOnly
             size === 'lg' && 'text-3xl'
         )}
       >
-        N Group Products
+        POS V1
       </span>
     </div>
   );

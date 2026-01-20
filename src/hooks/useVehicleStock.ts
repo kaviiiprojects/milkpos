@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { StockTransaction } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
@@ -9,7 +9,7 @@ export function useVehicleStock(vehicleId: string | undefined, enabled: boolean 
   const [vehicleStock, setVehicleStock] = useState<Map<string, number> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
 
   const fetchVehicleStock = useCallback(async () => {
     if (!vehicleId || !enabled) {
@@ -24,7 +24,7 @@ export function useVehicleStock(vehicleId: string | undefined, enabled: boolean 
         throw new Error('Failed to fetch vehicle stock data.');
       }
       const transactions: StockTransaction[] = await response.json();
-      
+
       const stockMap = new Map<string, number>();
       transactions.forEach(tx => {
         const currentQty = stockMap.get(tx.productId) || 0;
@@ -37,10 +37,7 @@ export function useVehicleStock(vehicleId: string | undefined, enabled: boolean 
       setVehicleStock(stockMap);
     } catch (error) {
       console.error('Error fetching vehicle stock:', error);
-      // Don't show toast on every polling error to avoid spam
-      if (!intervalRef.current) {
-        toast({ variant: "destructive", title: "Error", description: "Could not load vehicle stock." });
-      }
+      toast({ variant: "destructive", title: "Error", description: "Could not load vehicle stock." });
     } finally {
       setIsLoading(false);
     }
@@ -55,26 +52,7 @@ export function useVehicleStock(vehicleId: string | undefined, enabled: boolean 
     }
   }, [vehicleId, enabled, fetchVehicleStock]);
 
-  // Polling for real-time updates (every 5 seconds)
-  useEffect(() => {
-    if (vehicleId && enabled) {
-      intervalRef.current = setInterval(() => {
-        fetchVehicleStock();
-      }, 20000); // Poll every 20 seconds
 
-      return () => {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-      };
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    }
-  }, [vehicleId, enabled, fetchVehicleStock]);
 
   // Manual refetch function
   const refetch = useCallback(() => {
