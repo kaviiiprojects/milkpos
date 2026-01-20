@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers"; // Import the new client-side provider
 
 export const metadata: Metadata = {
-  title: "N Group Products",
+  title: "POS V1",
   description: "Point of Sale system for milk products.",
 };
 
